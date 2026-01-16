@@ -1,0 +1,1 @@
+https://raw.githubusercontent.com/antoniodetm/mi-dieta-personal/refs/heads/main/dieta_datos.json

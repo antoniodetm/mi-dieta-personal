@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dieta Pro Sincronizada</title>
+    <title>Dieta Sync Automático</title>
     <style>
         :root {
             --bg: #f2f2f7; --card: #ffffff; --accent: #007aff; --text: #1c1c1e;
@@ -13,7 +13,6 @@
 
         body { font-family: -apple-system, sans-serif; background-color: var(--bg); margin: 0; padding: 10px; color: var(--text); scroll-behavior: smooth; padding-bottom: 100px; }
         
-        /* Botonera Superior */
         .toolbar { display: flex; gap: 10px; margin-bottom: 20px; position: sticky; top: 0; z-index: 100; background: var(--bg); padding: 10px 0; }
         .btn-tool { flex: 1; padding: 12px; border-radius: 10px; border: none; color: white; font-weight: bold; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; }
         .btn-save { background-color: #34c759; }
@@ -52,8 +51,7 @@
 
     <div class="toolbar">
         <button class="btn-tool btn-save" onclick="exportarJSON()">💾 Guardar JSON</button>
-        <button class="btn-tool btn-sync" onclick="document.getElementById('inputSync').click()">🔄 Sincronizar</button>
-        <input type="file" id="inputSync" style="display:none" onchange="importarJSON(this)" accept=".json">
+        <button class="btn-tool btn-sync" onclick="sincronizarDesdeGithub()">🔄 Sincronizar GitHub</button>
     </div>
 
     <h1>🍎 Mi Menú Sincronizado</h1>
@@ -70,6 +68,9 @@
     </div>
 
     <script>
+        // CONFIGURACIÓN: PEGA AQUÍ TU URL RAW DE GITHUB
+        const URL_GITHUB_JSON = 'https://raw.githubusercontent.com/TU_USUARIO/TU_REPO/main/dieta_datos.json';
+
         const dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
         const categorias = [
             {id: 'prot', nombre: 'Proteínas', clase: 'cat-prot', color: 'var(--proteina)'},
@@ -167,7 +168,31 @@
             actualizarLista();
         }
 
-        // --- FUNCIONES DE SINCRONIZACIÓN ---
+        // --- NUEVA FUNCIÓN DE SINCRONIZACIÓN AUTOMÁTICA ---
+        async function sincronizarDesdeGithub() {
+            if (URL_GITHUB_JSON.includes('TU_USUARIO')) {
+                alert("Por favor, edita el código y pon tu URL real de GitHub en la variable URL_GITHUB_JSON.");
+                return;
+            }
+
+            try {
+                // Añadimos un parámetro random para evitar el caché del navegador
+                const respuesta = await fetch(`${URL_GITHUB_JSON}?nocache=${new Date().getTime()}`);
+                if (!respuesta.ok) throw new Error("No se pudo descargar el archivo de GitHub");
+                
+                const datos = await respuesta.json();
+                
+                if (confirm("Se han encontrado datos en GitHub. ¿Deseas sobreescribir tu menú actual?")) {
+                    localStorage.clear();
+                    for (let clave in datos) {
+                        localStorage.setItem(clave, datos[clave]);
+                    }
+                    location.reload();
+                }
+            } catch (error) {
+                alert("Error al sincronizar: " + error.message);
+            }
+        }
 
         function exportarJSON() {
             let datos = {};
@@ -182,19 +207,6 @@
             document.body.appendChild(downloadAnchorNode);
             downloadAnchorNode.click();
             downloadAnchorNode.remove();
-        }
-
-        function importarJSON(input) {
-            const reader = new FileReader();
-            reader.onload = function() {
-                const datos = JSON.parse(reader.result);
-                localStorage.clear();
-                for (let clave in datos) {
-                    localStorage.setItem(clave, datos[clave]);
-                }
-                location.reload(); // Recarga para aplicar cambios
-            };
-            reader.readAsText(input.files[0]);
         }
 
         renderizar();
