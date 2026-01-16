@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dieta Inteligente Sincronizada</title>
+    <title>Dieta Pro Sincronizada</title>
     <style>
         :root {
             --bg: #f2f2f7; --card: #ffffff; --accent: #007aff; --text: #1c1c1e;
@@ -11,24 +11,27 @@
             --proteina: #ff3b30; --vegetal: #28cd41; --carbo: #ff9500; --lacteo: #af52de;
         }
 
-        body { font-family: -apple-system, sans-serif; background-color: var(--bg); margin: 0; padding: 10px; color: var(--text); scroll-behavior: smooth; padding-bottom: 80px; }
-        h1, h2 { text-align: center; }
+        body { font-family: -apple-system, sans-serif; background-color: var(--bg); margin: 0; padding: 10px; color: var(--text); scroll-behavior: smooth; padding-bottom: 100px; }
         
-        .semana-header { padding: 12px; color: white; border-radius: 10px; margin: 25px 0 10px 0; text-align: center; font-weight: 800; }
+        /* Botonera Superior */
+        .toolbar { display: flex; gap: 10px; margin-bottom: 20px; position: sticky; top: 0; z-index: 100; background: var(--bg); padding: 10px 0; }
+        .btn-tool { flex: 1; padding: 12px; border-radius: 10px; border: none; color: white; font-weight: bold; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .btn-save { background-color: #34c759; }
+        .btn-sync { background-color: #007aff; }
+
+        .semana-header { padding: 12px; color: white; border-radius: 10px; margin: 10px 0; text-align: center; font-weight: 800; }
         .s1 { background-color: var(--semana1); }
         .s2 { background-color: var(--semana2); }
         .dia-card { background: var(--card); border-radius: 15px; padding: 15px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .dia-nombre { font-weight: bold; font-size: 20px; margin-bottom: 10px; color: var(--accent); }
 
         .bloque-ingesta { margin-bottom: 15px; padding: 10px; border-radius: 10px; background: #f8f9fa; border: 1px solid #eee; }
-        .label-ingesta { font-weight: 800; font-size: 11px; text-transform: uppercase; margin-bottom: 8px; display: block; opacity: 0.6; }
-        
         .plato-wrapper { display: flex; align-items: center; gap: 8px; }
         .plato-input { flex: 1; font-size: 16px; font-weight: 600; padding: 10px; background: white; border-radius: 8px; border: 1px solid #ddd; outline: none; }
         .btn-ir-receta { font-size: 12px; background: #e5e5ea; border: none; padding: 10px; border-radius: 8px; color: var(--accent); font-weight: bold; text-decoration: none; }
 
         .cat-box { margin-bottom: 5px; border-left: 3px solid #ccc; padding-left: 8px; margin-top: 8px; }
-        .cat-name { font-size: 10px; font-weight: 800; }
+        .cat-name { font-size: 10px; font-weight: 800; text-transform: uppercase; }
         .ing-input { font-size: 14px; min-height: 18px; outline: none; }
         .cat-prot { border-color: var(--proteina); color: var(--proteina); }
         .cat-veg { border-color: var(--vegetal); color: var(--vegetal); }
@@ -38,41 +41,41 @@
         .lista-compra-seccion { background: #1c1c1e; color: white; border-radius: 20px; padding: 20px; margin-top: 40px; }
         .item-check { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #2c2c2e; }
         .item-check.comprado { text-decoration: line-through; opacity: 0.4; }
-        .checkbox { width: 20px; height: 20px; border: 2px solid var(--accent); border-radius: 5px; margin-right: 12px; display: flex; align-items: center; justify-content: center; }
+        .checkbox { width: 20px; height: 20px; border: 2px solid var(--accent); border-radius: 5px; margin-right: 12px; }
         .comprado .checkbox { background: var(--accent); }
-        .comprado .checkbox::after { content: "✓"; color: white; font-size: 14px; }
 
         .elaboraciones-seccion { background: white; border-radius: 20px; padding: 20px; margin-top: 40px; border: 1px solid #ddd; }
-        .receta-item { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0; }
-        .receta-titulo { font-weight: bold; font-size: 18px; color: #d32f2f; margin-bottom: 8px; display: block; }
-        .receta-texto-editable { font-size: 15px; line-height: 1.6; color: #333; background: #fffcf0; padding: 10px; border-radius: 8px; border: 1px dashed #ccc; outline: none; min-height: 40px; }
-        .btn-subir { display: block; text-align: center; margin-top: 10px; color: var(--accent); text-decoration: none; font-size: 13px; }
+        .receta-texto-editable { font-size: 15px; line-height: 1.6; color: #333; background: #fffcf0; padding: 10px; border-radius: 8px; border: 1px dashed #ccc; outline: none; margin-top: 5px; }
     </style>
 </head>
 <body>
 
-    <h1>🍎 Menú Sincronizado Pro</h1>
+    <div class="toolbar">
+        <button class="btn-tool btn-save" onclick="exportarJSON()">💾 Guardar JSON</button>
+        <button class="btn-tool btn-sync" onclick="document.getElementById('inputSync').click()">🔄 Sincronizar</button>
+        <input type="file" id="inputSync" style="display:none" onchange="importarJSON(this)" accept=".json">
+    </div>
+
+    <h1>🍎 Mi Menú Sincronizado</h1>
     <div id="app"></div>
 
     <div class="lista-compra-seccion">
-        <h2>🛒 Lista de la Compra (Sin duplicados)</h2>
+        <h2>🛒 Lista de la Compra</h2>
         <div id="lista-detallada"></div>
     </div>
 
     <div class="elaboraciones-seccion" id="todas-elaboraciones">
-        <h2>👨‍🍳 Guía de Elaboración (Editable)</h2>
+        <h2>👨‍🍳 Guía de Elaboración</h2>
         <div id="contenedor-recetas"></div>
     </div>
-
-    <button style="background:#ff3b30; color:white; border:none; padding:15px; border-radius:10px; width:100%; font-weight:bold; margin-top:30px;" onclick="borrarTodo()">🗑️ Reiniciar Todo</button>
 
     <script>
         const dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
         const categorias = [
-            {id: 'prot', nombre: 'PROTEÍNAS', clase: 'cat-prot', color: 'var(--proteina)'},
-            {id: 'veg', nombre: 'FRUTAS Y VERDURAS', clase: 'cat-veg', color: 'var(--vegetal)'},
-            {id: 'carb', nombre: 'LEGUMBRE Y CARBOHIDRATOS', clase: 'cat-carb', color: 'var(--carbo)'},
-            {id: 'lact', nombre: 'LÁCTEOS Y FRUTOS SECOS', clase: 'cat-lact', color: 'var(--lacteo)'}
+            {id: 'prot', nombre: 'Proteínas', clase: 'cat-prot', color: 'var(--proteina)'},
+            {id: 'veg', nombre: 'Frutas y Verduras', clase: 'cat-veg', color: 'var(--vegetal)'},
+            {id: 'carb', nombre: 'Legumbre y Carb', clase: 'cat-carb', color: 'var(--carbo)'},
+            {id: 'lact', nombre: 'Lácteos y Frutos Secos', clase: 'cat-lact', color: 'var(--lacteo)'}
         ];
 
         function renderizar() {
@@ -88,41 +91,29 @@
                 }
             }
             document.getElementById('app').innerHTML = htmlApp;
-            cargarTodo();
+            cargarLocalStorage();
             actualizarGuia();
         }
 
         function renderBloque(sem, dia, tipo, icono) {
             const idInput = `s${sem}-${tipo}-plato-${dia}`;
             return `<div class="bloque-ingesta">
-                <span class="label-ingesta">${icono} ${tipo}</span>
+                <span style="font-size:10px; font-weight:800; opacity:0.5">${icono} ${tipo}</span>
                 <div class="plato-wrapper">
-                    <div class="plato-input" contenteditable="true" id="${idInput}" oninput="gestionarCambioPlato(this)"></div>
-                    <a href="#guia-${idInput}" class="btn-ir-receta">📖 Receta</a>
+                    <div class="plato-input" contenteditable="true" id="${idInput}" oninput="gestionarCambio(this)"></div>
+                    <a href="#guia-${idInput}" class="btn-ir-receta">📖</a>
                 </div>
                 ${categorias.map(cat => `
                     <div class="cat-box ${cat.clase}">
                         <div class="cat-name">${cat.nombre}</div>
-                        <div class="ing-input" contenteditable="true" id="s${sem}-${tipo}-${cat.id}-${dia}" oninput="guardarSimple(this)"></div>
+                        <div class="ing-input" contenteditable="true" id="s${sem}-${tipo}-${cat.id}-${dia}" oninput="gestionarCambio(this)"></div>
                     </div>`).join('')}
             </div>`;
         }
 
-        function gestionarCambioPlato(el) {
+        function gestionarCambio(el) {
             localStorage.setItem(el.id, el.innerText);
-            actualizarGuia();
-        }
-
-        function guardarSimple(el) {
-            localStorage.setItem(el.id, el.innerText);
-            actualizarLista();
-        }
-
-        function cargarTodo() {
-            document.querySelectorAll('[contenteditable="true"]').forEach(campo => {
-                const v = localStorage.getItem(campo.id);
-                if (v) campo.innerText = v;
-            });
+            if(el.classList.contains('plato-input')) actualizarGuia();
             actualizarLista();
         }
 
@@ -130,60 +121,80 @@
             const contenedor = document.getElementById('contenedor-recetas');
             let htmlRecetas = "";
             document.querySelectorAll('.plato-input').forEach(input => {
-                const nombrePlato = input.innerText.trim() || "Plato nuevo";
-                const idOriginal = input.id;
-                const idRecetaText = `receta-text-${idOriginal}`;
-                const recetaGuardada = localStorage.getItem(idRecetaText) || "Escribe aquí los pasos...";
+                const nombre = input.innerText.trim() || "Plato nuevo";
+                const idRecText = `receta-text-${input.id}`;
+                const valorRec = localStorage.getItem(idRecText) || "Pasos de elaboración...";
                 htmlRecetas += `
-                    <div class="receta-item" id="guia-${idOriginal}">
-                        <span class="receta-titulo">${nombrePlato}</span>
-                        <div class="receta-texto-editable" contenteditable="true" id="${idRecetaText}" oninput="localStorage.setItem(this.id, this.innerText)">${recetaGuardada}</div>
-                        <a href="#${idOriginal}" class="btn-subir">↑ Volver</a>
+                    <div style="margin-bottom:20px;" id="guia-${input.id}">
+                        <b style="color:#d32f2f">${nombre}</b>
+                        <div class="receta-texto-editable" contenteditable="true" id="${idRecText}" oninput="localStorage.setItem(this.id, this.innerText)">${valorRec}</div>
                     </div>`;
             });
             contenedor.innerHTML = htmlRecetas;
         }
 
         function actualizarLista() {
-            const contenedorLista = document.getElementById('lista-detallada');
-            let htmlLista = "";
-
+            const contenedor = document.getElementById('lista-detallada');
+            let html = "";
             categorias.forEach(cat => {
                 let itemsRaw = [];
-                // 1. Recoger todos los textos de esta categoría
-                document.querySelectorAll(`[id*="-${cat.id}-"]`).forEach(campo => {
-                    const texto = campo.innerText.trim();
-                    if (texto) {
-                        // Separar por comas o saltos de línea
-                        const partes = texto.split(/[\n,]+/).map(i => i.trim()).filter(i => i !== "");
-                        itemsRaw.push(...partes);
-                    }
+                document.querySelectorAll(`[id*="-${cat.id}-"]`).forEach(c => {
+                    if(c.innerText.trim()) itemsRaw.push(...c.innerText.split(/[\n,]+/).map(i => i.trim()));
                 });
-
-                // 2. ELIMINAR DUPLICADOS (Usando Set para que solo quede uno de cada)
-                // Convertimos a minúsculas para comparar, pero intentamos mantener el formato original
-                let itemsUnicos = [...new Set(itemsRaw.map(i => i.charAt(0).toUpperCase() + i.slice(1).toLowerCase()))];
-
-                if (itemsUnicos.length > 0) {
-                    htmlLista += `<div style="margin-top:20px;"><span style="color:${cat.color}; font-weight:800; font-size:12px;">${cat.nombre}</span>`;
-                    itemsUnicos.forEach(item => {
-                        const idCheck = `check-${cat.id}-${item.replace(/\s/g, '').toLowerCase()}`;
+                let unicos = [...new Set(itemsRaw.map(i => i.charAt(0).toUpperCase() + i.slice(1).toLowerCase()))];
+                if(unicos.length > 0) {
+                    html += `<div style="margin-top:15px; color:${cat.color}; font-size:12px; font-weight:800;">${cat.nombre}</div>`;
+                    unicos.forEach(item => {
+                        const idCheck = `check-${item.toLowerCase().replace(/\s/g,'')}`;
                         const isChecked = localStorage.getItem(idCheck) === 'true' ? 'comprado' : '';
-                        htmlLista += `<div class="item-check ${isChecked}" onclick="toggleCheck('${idCheck}', this)"><div class="checkbox"></div><span>${item}</span></div>`;
+                        html += `<div class="item-check ${isChecked}" onclick="toggleCheck('${idCheck}', this)"><div class="checkbox"></div>${item}</div>`;
                     });
-                    htmlLista += `</div>`;
                 }
             });
-            contenedorLista.innerHTML = htmlLista || "<p style='color:#666'>Sin ingredientes.</p>";
+            contenedor.innerHTML = html || "Lista vacía";
         }
 
-        function toggleCheck(id, el) { 
-            const m = el.classList.toggle('comprado'); 
-            localStorage.setItem(id, m); 
+        function toggleCheck(id, el) {
+            const m = el.classList.toggle('comprado');
+            localStorage.setItem(id, m);
         }
 
-        function borrarTodo() { 
-            if(confirm("¿Borrar todo?")) { localStorage.clear(); location.reload(); } 
+        function cargarLocalStorage() {
+            document.querySelectorAll('[contenteditable="true"]').forEach(campo => {
+                const v = localStorage.getItem(campo.id);
+                if (v) campo.innerText = v;
+            });
+            actualizarLista();
+        }
+
+        // --- FUNCIONES DE SINCRONIZACIÓN ---
+
+        function exportarJSON() {
+            let datos = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                let clave = localStorage.key(i);
+                datos[clave] = localStorage.getItem(clave);
+            }
+            let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(datos));
+            let downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "dieta_datos.json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        function importarJSON(input) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const datos = JSON.parse(reader.result);
+                localStorage.clear();
+                for (let clave in datos) {
+                    localStorage.setItem(clave, datos[clave]);
+                }
+                location.reload(); // Recarga para aplicar cambios
+            };
+            reader.readAsText(input.files[0]);
         }
 
         renderizar();
