@@ -6,52 +6,66 @@
     <title>Mi Dieta Pro</title>
     <style>
         :root {
-            --bg: #f2f2f7; --card: #ffffff; --accent: #007aff; --text: #1c1c1e;
-            --semana1: #34c759; --semana2: #5856d6;
-            --proteina: #ff3b30; --vegetal: #28cd41; --carbo: #ff9500; --lacteo: #af52de;
+            --bg: #f0f2f5; --card: #ffffff; --text: #1a1a1a; --accent: #007aff;
+            --proteina: #ff3b30; --vegetal: #34c759; --carbo: #ff9500; --lacteo: #af52de;
+            --semana1: #5856d6; --semana2: #007aff;
         }
 
-        body { font-family: -apple-system, sans-serif; background-color: var(--bg); margin: 0; padding: 10px; color: var(--text); scroll-behavior: smooth; padding-bottom: 100px; }
+        body { font-family: -apple-system, system-ui, sans-serif; background-color: var(--bg); margin: 0; padding: 5px; color: var(--text); scroll-behavior: smooth; padding-bottom: 60px; }
         
-        .toolbar { display: flex; gap: 10px; margin-bottom: 20px; position: sticky; top: 0; z-index: 100; background: var(--bg); padding: 10px 0; }
-        .btn-tool { flex: 1; padding: 12px; border-radius: 10px; border: none; color: white; font-weight: bold; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; }
-        .btn-save { background-color: #34c759; }
-        .btn-sync { background-color: #007aff; }
+        .toolbar { display: flex; gap: 8px; margin-bottom: 10px; position: sticky; top: 0; z-index: 100; background: rgba(240, 242, 245, 0.9); backdrop-filter: blur(8px); padding: 5px 0; }
+        .btn-tool { flex: 1; padding: 10px; border-radius: 10px; border: none; color: white; font-weight: bold; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-transform: uppercase; }
+        .btn-save { background: linear-gradient(135deg, #28cd41, #1db954); }
+        .btn-sync { background: linear-gradient(135deg, #007aff, #0051a8); }
 
-        .semana-header { padding: 12px; color: white; border-radius: 10px; margin: 10px 0; text-align: center; font-weight: 800; }
-        .s1 { background-color: var(--semana1); }
-        .s2 { background-color: var(--semana2); }
-        .dia-card { background: var(--card); border-radius: 15px; padding: 15px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .dia-nombre { font-weight: bold; font-size: 20px; margin-bottom: 10px; color: var(--accent); }
+        h1 { font-size: 22px; text-align: center; color: #1c1c1e; margin: 5px 0 10px 0; }
 
-        .bloque-ingesta { margin-bottom: 15px; padding: 10px; border-radius: 10px; background: #f8f9fa; border: 1px solid #eee; }
-        .plato-wrapper { display: flex; align-items: center; gap: 8px; }
-        .plato-input { flex: 1; font-size: 16px; font-weight: 600; padding: 10px; background: white; border-radius: 8px; border: 1px solid #ddd; outline: none; }
-        .btn-ir-receta { font-size: 12px; background: #e5e5ea; border: none; padding: 10px; border-radius: 8px; color: var(--accent); font-weight: bold; text-decoration: none; }
+        .semana-header { padding: 8px; color: white; border-radius: 8px; margin: 15px 0 8px 0; text-align: center; font-weight: 800; font-size: 14px; text-transform: uppercase; }
+        .s1 { background: var(--semana1); }
+        .s2 { background: var(--semana2); }
 
-        .cat-box { margin-bottom: 5px; border-left: 3px solid #ccc; padding-left: 8px; margin-top: 8px; }
-        .cat-name { font-size: 10px; font-weight: 800; text-transform: uppercase; }
-        .ing-input { font-size: 14px; min-height: 18px; outline: none; }
-        .cat-prot { border-color: var(--proteina); color: var(--proteina); }
-        .cat-veg { border-color: var(--vegetal); color: var(--vegetal); }
-        .cat-carb { border-color: var(--carbo); color: var(--carbo); }
-        .cat-lact { border-color: var(--lacteo); color: var(--lacteo); }
+        .dia-card { background: var(--card); border-radius: 15px; padding: 12px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .dia-nombre { font-weight: 800; font-size: 18px; margin-bottom: 10px; color: var(--accent); border-bottom: 1px solid #eee; padding-bottom: 5px; }
 
-        .lista-compra-seccion { background: #1c1c1e; color: white; border-radius: 20px; padding: 20px; margin-top: 40px; }
-        .item-check { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #2c2c2e; }
-        .item-check.comprado { text-decoration: line-through; opacity: 0.4; }
-        .checkbox { width: 20px; height: 20px; border: 2px solid var(--accent); border-radius: 5px; margin-right: 12px; }
+        .bloque-ingesta { margin-bottom: 10px; padding: 8px; border-radius: 12px; background: #fafafa; border: 1px solid #eee; }
+        .label-ingesta { font-weight: 800; font-size: 10px; text-transform: uppercase; margin-bottom: 5px; display: block; color: #777; }
+        
+        .plato-wrapper { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+        .plato-input { flex: 1; font-size: 15px; font-weight: 700; padding: 8px; background: white; border-radius: 8px; border: 1px solid #d1d1d6; outline: none; color: #000; min-height: 18px; }
+        .btn-ir-receta { font-size: 16px; background: #f2f2f7; border: 1px solid #d1d1d6; padding: 6px 10px; border-radius: 8px; text-decoration: none; }
+
+        .cat-box { margin-bottom: 4px; border-radius: 6px; padding: 4px 8px; display: flex; flex-direction: column; }
+        .cat-name { font-size: 9px; font-weight: 900; letter-spacing: 0.3px; line-height: 1; margin-bottom: 2px; }
+        .ing-input { font-size: 13px; min-height: 16px; outline: none; font-weight: 500; line-height: 1.2; }
+
+        .cat-prot { background: #fff1f0; border-left: 3px solid var(--proteina); color: #a9150b; }
+        .cat-veg { background: #f6ffed; border-left: 3px solid var(--vegetal); color: #135200; }
+        .cat-carb { background: #fff7e6; border-left: 3px solid var(--carbo); color: #874d00; }
+        .cat-lact { background: #f9f0ff; border-left: 3px solid var(--lacteo); color: #531dab; }
+
+        .lista-compra-seccion { background: #1c1c1e; color: white; border-radius: 18px; padding: 15px; margin-top: 20px; }
+        .lista-compra-seccion h2 { font-size: 18px; margin: 0 0 10px 0; }
+        .item-check { display: flex; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid #333; font-size: 14px; cursor: pointer; }
+        .item-check.comprado { opacity: 0.4; text-decoration: line-through; }
+        
+        .checkbox { width: 20px; height: 20px; border: 2px solid var(--accent); border-radius: 6px; margin-right: 12px; flex-shrink: 0; position: relative; margin-top: 2px; }
         .comprado .checkbox { background: var(--accent); }
+        .comprado .checkbox::after { content: "✓"; color: white; position: absolute; left: 4px; top: -2px; font-size: 16px; font-weight: bold; }
 
-        .elaboraciones-seccion { background: white; border-radius: 20px; padding: 20px; margin-top: 40px; border: 1px solid #ddd; }
-        .receta-texto-editable { font-size: 15px; line-height: 1.6; color: #333; background: #fffcf0; padding: 10px; border-radius: 8px; border: 1px dashed #ccc; outline: none; margin-top: 5px; }
+        /* Referencia con salto de línea */
+        .ref-plato-container { font-size: 8px; color: #888; margin-left: auto; text-transform: uppercase; font-weight: 600; text-align: right; padding-left: 10px; line-height: 1.2; max-width: 45%; }
+        .ref-plato-line { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .elaboraciones-seccion { background: white; border-radius: 18px; padding: 15px; margin-top: 20px; border: 1px solid #ddd; }
+        .receta-titulo-box { font-size: 15px; font-weight: 800; color: #d32f2f; margin-bottom: 4px; border-left: 3px solid #d32f2f; padding-left: 8px; }
+        .receta-texto-editable { font-size: 14px; padding: 10px; border-radius: 10px; margin-bottom: 15px; line-height: 1.4; border: 1px dashed #ccc; outline: none; }
     </style>
 </head>
 <body>
 
     <div class="toolbar">
-        <button class="btn-tool btn-save" onclick="exportarJSON()">💾 Guardar JSON</button>
-        <button class="btn-tool btn-sync" onclick="sincronizarDesdeGithub()">🔄 Cargar GitHub</button>
+        <button class="btn-tool btn-save" onclick="exportarJSON()">💾 Guardar</button>
+        <button class="btn-tool btn-sync" onclick="sincronizarDesdeGithub()">🔄 RECARGAR</button>
     </div>
 
     <h1>🍎 Mi Menú</h1>
@@ -68,21 +82,20 @@
     </div>
 
     <script>
-        // CONFIGURACIÓN: Reemplaza con tu URL RAW de GitHub
         const URL_GITHUB_JSON = 'https://raw.githubusercontent.com/TU_USUARIO/TU_REPO/main/dieta_datos.json';
-
+        
         const dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
         const categorias = [
             {id: 'prot', nombre: 'Proteínas', clase: 'cat-prot', color: 'var(--proteina)'},
-            {id: 'veg', nombre: 'Frutas y Verduras', clase: 'cat-veg', color: 'var(--vegetal)'},
-            {id: 'carb', nombre: 'Legumbre y Carb', clase: 'cat-carb', color: 'var(--carbo)'},
-            {id: 'lact', nombre: 'Lácteos y Frutos Secos', clase: 'cat-lact', color: 'var(--lacteo)'}
+            {id: 'veg', nombre: 'Verduras', clase: 'cat-veg', color: 'var(--vegetal)'},
+            {id: 'carb', nombre: 'Hidratos', clase: 'cat-carb', color: 'var(--carbo)'},
+            {id: 'lact', nombre: 'Lácteos/Frutos', clase: 'cat-lact', color: 'var(--lacteo)'}
         ];
 
         function renderizar() {
             let htmlApp = "";
             for (let s = 1; s <= 2; s++) {
-                htmlApp += `<div class="semana-header s${s}">SEMANA ${s}</div>`;
+                htmlApp += `<div class="semana-header s${s}">Semana ${s}</div>`;
                 for (let d = 0; d < 7; d++) {
                     htmlApp += `<div class="dia-card">
                         <div class="dia-nombre">${dias[d]}</div>
@@ -99,7 +112,7 @@
         function renderBloque(sem, dia, tipo, icono) {
             const idInput = `s${sem}-${tipo}-plato-${dia}`;
             return `<div class="bloque-ingesta">
-                <span style="font-size:10px; font-weight:800; opacity:0.5">${icono} ${tipo}</span>
+                <span class="label-ingesta">${icono} ${tipo}</span>
                 <div class="plato-wrapper">
                     <div class="plato-input" contenteditable="true" id="${idInput}" oninput="gestionarCambio(this)"></div>
                     <a href="#guia-${idInput}" class="btn-ir-receta">📖</a>
@@ -124,12 +137,11 @@
             document.querySelectorAll('.plato-input').forEach(input => {
                 const nombre = input.innerText.trim() || "Plato nuevo";
                 const idRecText = `receta-text-${input.id}`;
-                const valorRec = localStorage.getItem(idRecText) || "Pasos de elaboración...";
-                htmlRecetas += `
-                    <div style="margin-bottom:20px;" id="guia-${input.id}">
-                        <b style="color:#d32f2f">${nombre}</b>
-                        <div class="receta-texto-editable" contenteditable="true" id="${idRecText}" oninput="localStorage.setItem(this.id, this.innerText)">${valorRec}</div>
-                    </div>`;
+                const valorRec = localStorage.getItem(idRecText) || "Pasos...";
+                htmlRecetas += `<div id="guia-${input.id}">
+                    <span class="receta-titulo-box">${nombre}</span>
+                    <div class="receta-texto-editable" contenteditable="true" id="${idRecText}" oninput="localStorage.setItem(this.id, this.innerText)">${valorRec}</div>
+                </div>`;
             });
             contenedor.innerHTML = htmlRecetas;
         }
@@ -137,22 +149,51 @@
         function actualizarLista() {
             const contenedor = document.getElementById('lista-detallada');
             let html = "";
+            
             categorias.forEach(cat => {
-                let itemsRaw = [];
-                document.querySelectorAll(`[id*="-${cat.id}-"]`).forEach(c => {
-                    if(c.innerText.trim()) itemsRaw.push(...c.innerText.split(/[\n,]+/).map(i => i.trim()));
+                let mapaIngredientes = {}; 
+                
+                document.querySelectorAll(`[id*="-${cat.id}-"]`).forEach(inputIng => {
+                    if(inputIng.innerText.trim()) {
+                        const partesId = inputIng.id.split('-');
+                        const idPlatoRel = `${partesId[0]}-${partesId[1]}-plato-${partesId[3]}`;
+                        const nombrePlato = document.getElementById(idPlatoRel)?.innerText.trim() || "Sin nombre";
+                        
+                        const listaIng = inputIng.innerText.split(/[\n,]+/).map(i => i.trim()).filter(i => i);
+                        
+                        listaIng.forEach(ing => {
+                            let nombreFormateado = ing.charAt(0).toUpperCase() + ing.slice(1).toLowerCase();
+                            if(!mapaIngredientes[nombreFormateado]) {
+                                mapaIngredientes[nombreFormateado] = new Set();
+                            }
+                            mapaIngredientes[nombreFormateado].add(nombrePlato);
+                        });
+                    }
                 });
-                let unicos = [...new Set(itemsRaw.map(i => i.charAt(0).toUpperCase() + i.slice(1).toLowerCase()))];
-                if(unicos.length > 0) {
-                    html += `<div style="margin-top:15px; color:${cat.color}; font-size:12px; font-weight:800;">${cat.nombre}</div>`;
-                    unicos.forEach(item => {
-                        const idCheck = `check-${item.toLowerCase().replace(/\s/g,'')}`;
+
+                let clavesOrdenadas = Object.keys(mapaIngredientes).sort((a, b) => a.localeCompare(b));
+
+                if(clavesOrdenadas.length > 0) {
+                    html += `<div style="margin-top:12px; color:${cat.color}; font-size:11px; font-weight:900; text-transform:uppercase;">${cat.nombre}</div>`;
+                    clavesOrdenadas.forEach(nombre => {
+                        const idCheck = `check-${nombre.toLowerCase().replace(/\s/g,'')}`;
                         const isChecked = localStorage.getItem(idCheck) === 'true' ? 'comprado' : '';
-                        html += `<div class="item-check ${isChecked}" onclick="toggleCheck('${idCheck}', this)"><div class="checkbox"></div>${item}</div>`;
+                        
+                        // Crear líneas individuales para cada plato (Paso de carro)
+                        const platosHTML = Array.from(mapaIngredientes[nombre])
+                            .map(p => `<span class="ref-plato-line">${p}</span>`)
+                            .join('');
+                        
+                        html += `
+                        <div class="item-check ${isChecked}" onclick="toggleCheck('${idCheck}', this)">
+                            <div class="checkbox"></div>
+                            <span style="flex: 1; margin-top: 3px;">${nombre}</span>
+                            <div class="ref-plato-container">${platosHTML}</div>
+                        </div>`;
                     });
                 }
             });
-            contenedor.innerHTML = html || "Lista vacía";
+            contenedor.innerHTML = html || "<p style='font-size:12px; color:#666'>Lista vacía.</p>";
         }
 
         function toggleCheck(id, el) {
@@ -169,35 +210,25 @@
         }
 
         async function sincronizarDesdeGithub() {
-            if (URL_GITHUB_JSON.includes('TU_USUARIO')) {
-                alert("Configura primero tu URL de GitHub en el código.");
-                return;
-            }
+            if (URL_GITHUB_JSON.includes('TU_USUARIO')) { alert("Configura la URL de GitHub."); return; }
             try {
-                const respuesta = await fetch(`${URL_GITHUB_JSON}?nocache=${new Date().getTime()}`);
-                if (!respuesta.ok) throw new Error("Error al descargar");
-                const datos = await respuesta.json();
-                if (confirm("¿Cargar datos desde GitHub? Esto borrará tus cambios locales no guardados.")) {
+                const r = await fetch(`${URL_GITHUB_JSON}?v=${new Date().getTime()}`);
+                const d = await r.json();
+                if (confirm("¿RECARGAR datos de GitHub?")) {
                     localStorage.clear();
-                    for (let clave in datos) { localStorage.setItem(clave, datos[clave]); }
+                    for (let k in d) { localStorage.setItem(k, d[k]); }
                     location.reload();
                 }
-            } catch (error) {
-                alert("Error: " + error.message);
-            }
+            } catch (e) { alert("Error."); }
         }
 
         function exportarJSON() {
-            let datos = {};
+            let d = {};
             for (let i = 0; i < localStorage.length; i++) {
-                let clave = localStorage.key(i);
-                datos[clave] = localStorage.getItem(clave);
+                let k = localStorage.key(i); d[k] = localStorage.getItem(k);
             }
-            let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(datos));
-            let dl = document.createElement('a');
-            dl.setAttribute("href", dataStr);
-            dl.setAttribute("download", "dieta_datos.json");
-            dl.click();
+            let s = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(d));
+            let a = document.createElement('a'); a.href = s; a.download = "dieta_datos.json"; a.click();
         }
 
         renderizar();
