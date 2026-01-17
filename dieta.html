@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dieta Sync Automático</title>
+    <title>Mi Dieta Pro</title>
     <style>
         :root {
             --bg: #f2f2f7; --card: #ffffff; --accent: #007aff; --text: #1c1c1e;
@@ -51,10 +51,10 @@
 
     <div class="toolbar">
         <button class="btn-tool btn-save" onclick="exportarJSON()">💾 Guardar JSON</button>
-        <button class="btn-tool btn-sync" onclick="sincronizarDesdeGithub()">🔄 Sincronizar GitHub</button>
+        <button class="btn-tool btn-sync" onclick="sincronizarDesdeGithub()">🔄 Cargar GitHub</button>
     </div>
 
-    <h1>🍎 Mi Menú Sincronizado</h1>
+    <h1>🍎 Mi Menú</h1>
     <div id="app"></div>
 
     <div class="lista-compra-seccion">
@@ -68,8 +68,8 @@
     </div>
 
     <script>
-        // CONFIGURACIÓN: PEGA AQUÍ TU URL RAW DE GITHUB
-        const URL_GITHUB_JSON = 'https://raw.githubusercontent.com/antoniodetm/mi-dieta-personal/refs/heads/main/dieta_datos.json';
+        // CONFIGURACIÓN: Reemplaza con tu URL RAW de GitHub
+        const URL_GITHUB_JSON = 'https://raw.githubusercontent.com/TU_USUARIO/TU_REPO/main/dieta_datos.json';
 
         const dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
         const categorias = [
@@ -168,29 +168,22 @@
             actualizarLista();
         }
 
-        // --- NUEVA FUNCIÓN DE SINCRONIZACIÓN AUTOMÁTICA ---
         async function sincronizarDesdeGithub() {
             if (URL_GITHUB_JSON.includes('TU_USUARIO')) {
-                alert("Por favor, edita el código y pon tu URL real de GitHub en la variable URL_GITHUB_JSON.");
+                alert("Configura primero tu URL de GitHub en el código.");
                 return;
             }
-
             try {
-                // Añadimos un parámetro random para evitar el caché del navegador
                 const respuesta = await fetch(`${URL_GITHUB_JSON}?nocache=${new Date().getTime()}`);
-                if (!respuesta.ok) throw new Error("No se pudo descargar el archivo de GitHub");
-                
+                if (!respuesta.ok) throw new Error("Error al descargar");
                 const datos = await respuesta.json();
-                
-                if (confirm("Se han encontrado datos en GitHub. ¿Deseas sobreescribir tu menú actual?")) {
+                if (confirm("¿Cargar datos desde GitHub? Esto borrará tus cambios locales no guardados.")) {
                     localStorage.clear();
-                    for (let clave in datos) {
-                        localStorage.setItem(clave, datos[clave]);
-                    }
+                    for (let clave in datos) { localStorage.setItem(clave, datos[clave]); }
                     location.reload();
                 }
             } catch (error) {
-                alert("Error al sincronizar: " + error.message);
+                alert("Error: " + error.message);
             }
         }
 
@@ -201,12 +194,10 @@
                 datos[clave] = localStorage.getItem(clave);
             }
             let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(datos));
-            let downloadAnchorNode = document.createElement('a');
-            downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", "dieta_datos.json");
-            document.body.appendChild(downloadAnchorNode);
-            downloadAnchorNode.click();
-            downloadAnchorNode.remove();
+            let dl = document.createElement('a');
+            dl.setAttribute("href", dataStr);
+            dl.setAttribute("download", "dieta_datos.json");
+            dl.click();
         }
 
         renderizar();
