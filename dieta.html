@@ -24,15 +24,15 @@
         .s1 { background: var(--semana1); }
         .s2 { background: var(--semana2); }
 
-        .dia-card { background: var(--card); border-radius: 15px; padding: 12px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .dia-card { background: var(--card); border-radius: 15px; padding: 12px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); scroll-margin-top: 60px; }
         .dia-nombre { font-weight: 800; font-size: 18px; margin-bottom: 10px; color: var(--accent); border-bottom: 1px solid #eee; padding-bottom: 5px; }
 
-        .bloque-ingesta { margin-bottom: 10px; padding: 8px; border-radius: 12px; background: #fafafa; border: 1px solid #eee; }
+        .bloque-ingesta { margin-bottom: 10px; padding: 8px; border-radius: 12px; background: #fafafa; border: 1px solid #eee; scroll-margin-top: 70px; }
         .label-ingesta { font-weight: 800; font-size: 10px; text-transform: uppercase; margin-bottom: 5px; display: block; color: #777; }
         
         .plato-wrapper { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
         .plato-input { flex: 1; font-size: 15px; font-weight: 700; padding: 8px; background: white; border-radius: 8px; border: 1px solid #d1d1d6; outline: none; color: #000; min-height: 18px; }
-        .btn-ir-receta { font-size: 16px; background: #f2f2f7; border: 1px solid #d1d1d6; padding: 6px 10px; border-radius: 8px; text-decoration: none; }
+        .btn-ir-receta { font-size: 16px; background: #f2f2f7; border: 1px solid #d1d1d6; padding: 6px 10px; border-radius: 8px; text-decoration: none; cursor: pointer; }
 
         .cat-box { margin-bottom: 4px; border-radius: 6px; padding: 4px 8px; display: flex; flex-direction: column; }
         .cat-name { font-size: 9px; font-weight: 900; letter-spacing: 0.3px; line-height: 1; margin-bottom: 2px; }
@@ -52,13 +52,16 @@
         .comprado .checkbox { background: var(--accent); }
         .comprado .checkbox::after { content: "✓"; color: white; position: absolute; left: 4px; top: -2px; font-size: 16px; font-weight: bold; }
 
-        /* Referencia con salto de línea */
         .ref-plato-container { font-size: 8px; color: #888; margin-left: auto; text-transform: uppercase; font-weight: 600; text-align: right; padding-left: 10px; line-height: 1.2; max-width: 45%; }
         .ref-plato-line { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         .elaboraciones-seccion { background: white; border-radius: 18px; padding: 15px; margin-top: 20px; border: 1px solid #ddd; }
-        .receta-titulo-box { font-size: 15px; font-weight: 800; color: #d32f2f; margin-bottom: 4px; border-left: 3px solid #d32f2f; padding-left: 8px; }
-        .receta-texto-editable { font-size: 14px; padding: 10px; border-radius: 10px; margin-bottom: 15px; line-height: 1.4; border: 1px dashed #ccc; outline: none; }
+        .receta-card { margin-bottom: 25px; scroll-margin-top: 75px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .receta-titulo-box { font-size: 15px; font-weight: 800; color: #d32f2f; margin-bottom: 4px; border-left: 3px solid #d32f2f; padding-left: 8px; display: block; }
+        .receta-texto-editable { font-size: 14px; padding: 10px; border-radius: 10px; line-height: 1.4; border: 1px dashed #ccc; outline: none; background: #fdfdfd; min-height: 40px; }
+        
+        /* Botón de vuelta */
+        .btn-volver-menu { display: inline-block; margin-top: 8px; font-size: 11px; font-weight: bold; color: var(--accent); background: #eef6ff; padding: 5px 10px; border-radius: 6px; border: 1px solid var(--accent); cursor: pointer; }
     </style>
 </head>
 <body>
@@ -111,11 +114,12 @@
 
         function renderBloque(sem, dia, tipo, icono) {
             const idInput = `s${sem}-${tipo}-plato-${dia}`;
-            return `<div class="bloque-ingesta">
+            const idContenedor = `bloque-${idInput}`;
+            return `<div class="bloque-ingesta" id="${idContenedor}">
                 <span class="label-ingesta">${icono} ${tipo}</span>
                 <div class="plato-wrapper">
                     <div class="plato-input" contenteditable="true" id="${idInput}" oninput="gestionarCambio(this)"></div>
-                    <a href="#guia-${idInput}" class="btn-ir-receta">📖</a>
+                    <button class="btn-ir-receta" onclick="irAReceta('${idInput}')">📖</button>
                 </div>
                 ${categorias.map(cat => `
                     <div class="cat-box ${cat.clase}">
@@ -123,6 +127,14 @@
                         <div class="ing-input" contenteditable="true" id="s${sem}-${tipo}-${cat.id}-${dia}" oninput="gestionarCambio(this)"></div>
                     </div>`).join('')}
             </div>`;
+        }
+
+        function irAReceta(idPlato) {
+            document.getElementById(`guia-${idPlato}`).scrollIntoView();
+        }
+
+        function volverAMenu(idPlato) {
+            document.getElementById(`bloque-${idPlato}`).scrollIntoView();
         }
 
         function gestionarCambio(el) {
@@ -138,9 +150,11 @@
                 const nombre = input.innerText.trim() || "Plato nuevo";
                 const idRecText = `receta-text-${input.id}`;
                 const valorRec = localStorage.getItem(idRecText) || "Pasos...";
-                htmlRecetas += `<div id="guia-${input.id}">
+                htmlRecetas += `
+                <div class="receta-card" id="guia-${input.id}">
                     <span class="receta-titulo-box">${nombre}</span>
                     <div class="receta-texto-editable" contenteditable="true" id="${idRecText}" oninput="localStorage.setItem(this.id, this.innerText)">${valorRec}</div>
+                    <div class="btn-volver-menu" onclick="volverAMenu('${input.id}')">Volver al Menú ↑</div>
                 </div>`;
             });
             contenedor.innerHTML = htmlRecetas;
@@ -157,7 +171,7 @@
                     if(inputIng.innerText.trim()) {
                         const partesId = inputIng.id.split('-');
                         const idPlatoRel = `${partesId[0]}-${partesId[1]}-plato-${partesId[3]}`;
-                        const nombrePlato = document.getElementById(idPlatoRel)?.innerText.trim() || "Sin nombre";
+                        const nombrePlato = document.getElementById(idPlatoRel)?.innerText.trim() || "S/N";
                         
                         const listaIng = inputIng.innerText.split(/[\n,]+/).map(i => i.trim()).filter(i => i);
                         
@@ -178,11 +192,7 @@
                     clavesOrdenadas.forEach(nombre => {
                         const idCheck = `check-${nombre.toLowerCase().replace(/\s/g,'')}`;
                         const isChecked = localStorage.getItem(idCheck) === 'true' ? 'comprado' : '';
-                        
-                        // Crear líneas individuales para cada plato (Paso de carro)
-                        const platosHTML = Array.from(mapaIngredientes[nombre])
-                            .map(p => `<span class="ref-plato-line">${p}</span>`)
-                            .join('');
+                        const platosHTML = Array.from(mapaIngredientes[nombre]).map(p => `<span class="ref-plato-line">${p}</span>`).join('');
                         
                         html += `
                         <div class="item-check ${isChecked}" onclick="toggleCheck('${idCheck}', this)">
