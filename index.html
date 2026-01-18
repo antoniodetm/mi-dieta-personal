@@ -245,7 +245,7 @@
         async function sincronizar() {
             if(!confirm("¿Sincronizar?")) return;
             try {
-                const r = await fetch('https://raw.githubusercontent.com/TU_USUARIO/TU_REPO/main/dieta.json');
+                const r = await fetch('https://raw.githubusercontent.com/antoniodetm/mi-dieta-personal/refs/heads/main/dieta_datos.json');
                 const d = await r.json();
                 Object.keys(d).forEach(k => localStorage.setItem(k, d[k]));
                 location.reload();
