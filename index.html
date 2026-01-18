@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mi Dieta Pro - Navegación Completa</title>
+    <style>
+        :root {
+            --bg: #f2f2f7; --card: #ffffff; --text: #1c1c1e; --accent: #007aff;
+            --proteina: #ff3b30; --vegetal: #34c759; --carbo: #ff9500; --lacteo: #af52de;
+        }
+
+        body { font-family: -apple-system, system-ui, sans-serif; background-color: var(--bg); margin: 0; padding: 0; color: var(--text); scroll-behavior: smooth; }
+        
+        .toolbar { 
+            display: flex; gap: 4px; position: sticky; top: 0; z-index: 9999; 
+            background: rgba(242, 242, 247, 0.95); backdrop-filter: blur(10px); 
+            padding: 8px 6px; border-bottom: 1px solid #d1d1d6; 
+        }
+
+        .btn-tool { flex: 1; padding: 12px 2px; border-radius: 8px; border: none; color: white; font-weight: 700; font-size: 8px; cursor: pointer; text-transform: uppercase; }
+        .btn-home { background: #3a3a3c; }
+        .btn-menu { background: #5856d6; }
+        .btn-compra { background: #ff9500; }
+        .btn-sync { background: #007aff; }
+        .btn-save { background: #28cd41; }
+
+        .titulo-seccion { text-align: center; font-size: 24px; font-weight: 900; margin: 15px 0; color: var(--text); }
+        .vista { display: none; padding: 8px; }
+
+        /* DASHBOARD */
+        .dashboard { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .dash-semana { grid-column: span 2; font-weight: 800; font-size: 11px; margin: 15px 0 5px; color: #8e8e93; text-transform: uppercase; border-bottom: 0.5px solid #d1d1d6; }
+        .dash-dia { background: white; padding: 10px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; }
+        .dash-dia.hoy { border: 2px solid var(--accent); background: #f0f7ff; }
+        .dash-dia-texto { font-weight: 800; font-size: 14px; color: var(--accent); margin-bottom: 4px; display: block; }
+        .dash-plato-resumen { font-size: 10px; color: #3a3a3c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* MENU DETALLE */
+        .semana-header { padding: 8px; color: white; border-radius: 8px; margin: 10px 0; text-align: center; font-weight: 800; background: #5856d6; }
+        .dia-card { background: white; border-radius: 16px; padding: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); scroll-margin-top: 75px; }
+        .dia-nombre-fecha { font-weight: 800; font-size: 18px; color: var(--accent); border-bottom: 1px solid #f2f2f7; padding-bottom: 4px; display: block; margin-bottom: 10px; }
+        .bloque-ingesta { margin-bottom: 10px; padding: 8px; border-radius: 12px; background: #f9f9f9; border: 0.5px solid #e5e5ea; scroll-margin-top: 80px; }
+        .plato-input { font-size: 14px; font-weight: 700; padding: 8px; background: white; border-radius: 8px; border: 1px solid #d1d1d6; outline: none; flex: 1; }
+
+        /* CATEGORÍAS */
+        .cat-box { margin-bottom: 4px; border-radius: 6px; padding: 4px 8px; border-left: 4px solid #ccc; position: relative; }
+        .cat-group-tag { font-size: 7px; font-weight: 900; text-transform: uppercase; color: rgba(0,0,0,0.3); position: absolute; top: 1px; left: 8px; }
+        .ing-input { font-size: 13px; outline: none; min-height: 16px; padding-top: 6px; }
+        .cat-prot { border-color: var(--proteina); background: #fff1f0; }
+        .cat-veg { border-color: var(--vegetal); background: #f6ffed; }
+        .cat-carb { border-color: var(--carbo); background: #fff7e6; }
+        .cat-lact { border-color: var(--lacteo); background: #f9f0ff; }
+
+        /* COMPRA */
+        .compra-container { background: white; border-radius: 20px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .item-check { display: flex; align-items: center; padding: 12px 0; border-bottom: 0.5px solid #f2f2f7; cursor: pointer; }
+        .item-check.comprado { opacity: 0.3; text-decoration: line-through; }
+        .checkbox { width: 20px; height: 20px; border: 2px solid var(--accent); border-radius: 6px; margin-right: 12px; flex-shrink: 0; }
+        .comprado .checkbox { background: var(--accent); }
+        .ref-plato { font-size: 9px; color: #8e8e93; margin-left: auto; text-align: right; }
+
+        /* RECETAS */
+        .receta-card { background: #fff; padding: 15px; border-radius: 16px; margin-bottom: 25px; border: 1px solid #eee; scroll-margin-top: 85px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+        .receta-titulo { color: #d32f2f; font-weight: 800; border-left: 4px solid #d32f2f; padding-left: 8px; margin-bottom: 10px; display: block; font-size: 16px; }
+        .receta-text { font-size: 14px; padding: 12px; background: #fafafa; border-radius: 10px; border: 1px dashed #ccc; outline: none; min-height: 50px; line-height: 1.5; }
+        .btn-volver-receta { background: #f0f0f5; color: var(--accent); border: 1px solid var(--accent); border-radius: 8px; padding: 8px; font-size: 10px; font-weight: bold; margin-top: 10px; width: 100%; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="toolbar">
+        <button class="btn-tool btn-home" onclick="cambiarVista('dashboard')">🏠 INICIO</button>
+        <button class="btn-tool btn-menu" onclick="cambiarVista('menu')">📋 MENÚ</button>
+        <button class="btn-tool btn-compra" onclick="cambiarVista('compra')">🛒 COMPRA</button>
+        <button class="btn-tool btn-sync" onclick="sincronizar()">🔄 SYNC</button>
+        <button class="btn-tool btn-save" onclick="exportarJSON()">💾 SAVE</button>
+    </div>
+
+    <div id="vista-dashboard" class="vista" style="display: block;">
+        <h1 class="titulo-seccion">Mi Planificación</h1>
+        <div id="dash-content" class="dashboard"></div>
+    </div>
+
+    <div id="vista-menu" class="vista">
+        <div id="menu-content"></div>
+        <h1 class="titulo-seccion">👨‍🍳 Elaboración</h1>
+        <div id="recetas-content"></div>
+    </div>
+
+    <div id="vista-compra" class="vista">
+        <h1 class="titulo-seccion">Lista de Compra</h1>
+        <div id="lista-detallada" class="compra-container"></div>
+    </div>
+
+    <script>
+        const diasSemana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+        const cats = [
+            {id: 'prot', nombre: 'Proteína', clase: 'cat-prot', color: 'var(--proteina)'},
+            {id: 'veg', nombre: 'Verdura', clase: 'cat-veg', color: 'var(--vegetal)'},
+            {id: 'carb', nombre: 'Hidratos', clase: 'cat-carb', color: 'var(--carbo)'},
+            {id: 'lact', nombre: 'Lácteos/Frutos', clase: 'cat-lact', color: 'var(--lacteo)'}
+        ];
+
+        const hoyRef = new Date(2026, 0, 18); 
+
+        function cambiarVista(id) {
+            document.querySelectorAll('.vista').forEach(v => v.style.display = 'none');
+            document.getElementById('vista-' + id).style.display = 'block';
+            window.scrollTo(0,0);
+            if(id === 'compra') actualizarLista();
+            if(id === 'dashboard') renderDashboard();
+        }
+
+        function obtenerTextoFecha(semana, indiceDia) {
+            let fecha = new Date(hoyRef);
+            let diferencia = (indiceDia - 6) + ((semana - 1) * 7);
+            fecha.setDate(fecha.getDate() + diferencia);
+            let diaIdx = fecha.getDay();
+            let nombreDia = diasSemana[diaIdx === 0 ? 6 : diaIdx - 1];
+            return `${nombreDia} ${fecha.getDate()}`;
+        }
+
+        function renderDashboard() {
+            let html = "";
+            for (let s = 1; s <= 2; s++) {
+                html += `<div class="dash-semana">Semana ${s}</div>`;
+                for (let d = 0; d < 7; d++) {
+                    const txt = obtenerTextoFecha(s, d);
+                    const tC = localStorage.getItem(`s${s}-Comida-plato-${d}`) || "";
+                    const tN = localStorage.getItem(`s${s}-Cena-plato-${d}`) || "";
+                    const esHoy = (s === 1 && d === 6);
+                    html += `
+                    <div class="dash-dia ${esHoy ? 'hoy' : ''}" onclick="irADia(${s}, ${d})">
+                        <span class="dash-dia-texto">${txt}</span>
+                        <div class="dash-plato-resumen"><b>C:</b> ${tC || "---"}</div>
+                        <div class="dash-plato-resumen"><b>N:</b> ${tN || "---"}</div>
+                    </div>`;
+                }
+            }
+            document.getElementById('dash-content').innerHTML = html;
+        }
+
+        function irADia(s, d) {
+            cambiarVista('menu');
+            setTimeout(() => { document.getElementById(`dia-s${s}-${d}`)?.scrollIntoView(); }, 150);
+        }
+
+        function volverAPlato(idPlato) {
+            const el = document.getElementById(`bloque-${idPlato}`);
+            if (el) el.scrollIntoView();
+        }
+
+        function renderMenu() {
+            let html = "";
+            for (let s = 1; s <= 2; s++) {
+                html += `<div class="semana-header">Semana ${s}</div>`;
+                for (let d = 0; d < 7; d++) {
+                    const txt = obtenerTextoFecha(s, d);
+                    html += `
+                    <div class="dia-card" id="dia-s${s}-${d}">
+                        <span class="dia-nombre-fecha">${txt}</span>
+                        ${renderBloque(s, d, 'Comida', '🍽️')}
+                        ${renderBloque(s, d, 'Cena', '🌙')}
+                    </div>`;
+                }
+            }
+            document.getElementById('menu-content').innerHTML = html;
+            cargarDatos();
+        }
+
+        function renderBloque(s, d, tipo, ico) {
+            const id = `s${s}-${tipo}-plato-${d}`;
+            return `
+            <div class="bloque-ingesta" id="bloque-${id}">
+                <div style="display:flex; gap:6px; align-items:center; margin-bottom:8px;">
+                    <span style="font-size:10px;">${ico}</span>
+                    <div class="plato-input" contenteditable="true" id="${id}" oninput="guardar(this)"></div>
+                    <button style="border:none; background:#eee; padding:6px; border-radius:6px; cursor:pointer;" onclick="document.getElementById('guia-${id}').scrollIntoView()">📖</button>
+                </div>
+                ${cats.map(c => `
+                    <div class="cat-box ${c.clase}">
+                        <span class="cat-group-tag">${c.nombre}</span>
+                        <div class="ing-input" contenteditable="true" id="s${s}-${tipo}-${c.id}-${d}" oninput="guardar(this)"></div>
+                    </div>`).join('')}
+            </div>`;
+        }
+
+        function guardar(el) {
+            localStorage.setItem(el.id, el.innerText);
+            if(el.id.includes('plato')) actualizarRecetas();
+        }
+
+        function actualizarRecetas() {
+            let html = "";
+            document.querySelectorAll('.plato-input').forEach(input => {
+                const nom = input.innerText.trim() || "Plato";
+                const idRec = `receta-text-${input.id}`;
+                html += `
+                <div class="receta-card" id="guia-${input.id}">
+                    <span class="receta-titulo">${nom}</span>
+                    <div class="receta-text" contenteditable="true" id="${idRec}" oninput="localStorage.setItem(this.id, this.innerText)">${localStorage.getItem(idRec) || "..."}</div>
+                    <button class="btn-volver-receta" onclick="volverAPlato('${input.id}')">Volver al Plato ↑</button>
+                </div>`;
+            });
+            document.getElementById('recetas-content').innerHTML = html;
+        }
+
+        function actualizarLista() {
+            const cont = document.getElementById('lista-detallada');
+            let html = "";
+            cats.forEach(c => {
+                let mapa = {};
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key.includes(`-${c.id}-`)) {
+                        const val = localStorage.getItem(key).trim();
+                        if (val) {
+                            const p = key.split('-');
+                            const platoKey = `${p[0]}-${p[1]}-plato-${p[3]}`;
+                            const platoNom = localStorage.getItem(platoKey) || "S/N";
+                            val.split(/[\n,]+/).map(ing => ing.trim()).filter(ing => ing).forEach(ing => {
+                                let f = ing.charAt(0).toUpperCase() + ing.slice(1).toLowerCase();
+                                if (!mapa[f]) mapa[f] = new Set();
+                                mapa[f].add(platoNom);
+                            });
+                        }
+                    }
+                }
+                if (Object.keys(mapa).length > 0) {
+                    html += `<div style="color:${c.color}; font-size:12px; font-weight:900; margin:15px 0 5px; text-transform:uppercase;">${c.nombre}</div>`;
+                    Object.keys(mapa).sort().forEach(k => {
+                        html += `<div class="item-check" onclick="this.classList.toggle('comprado')"><div class="checkbox"></div><span style="flex:1; font-size:14px;">${k}</span><div class="ref-plato">${Array.from(mapa[k]).join('<br>')}</div></div>`;
+                    });
+                }
+            });
+            cont.innerHTML = html || "<p style='text-align:center; color:#999;'>No hay ingredientes anotados.</p>";
+        }
+
+        async function sincronizar() {
+            if(!confirm("¿Cargar datos desde la nube? Se perderán los cambios locales.")) return;
+            try {
+                const r = await fetch('https://raw.githubusercontent.com/TU_USUARIO/TU_REPO/main/dieta.json');
+                const d = await r.json();
+                Object.keys(d).forEach(k => localStorage.setItem(k, d[k]));
+                location.reload();
+            } catch(e) { alert("Error de conexión. Revisa la URL."); }
+        }
+
+        function cargarDatos() {
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const el = document.getElementById(key);
+                if (el) el.innerText = localStorage.getItem(key);
+            }
+            actualizarRecetas();
+        }
+
+        function exportarJSON() {
+            let d = {}; for(let i=0; i<localStorage.length; i++){ let k = localStorage.key(i); d[k] = localStorage.getItem(k); }
+            let a = document.createElement('a'); a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(d)); a.download = "dieta.json"; a.click();
+        }
+
+        renderMenu(); renderDashboard();
+    </script>
+</body>
+</html>
