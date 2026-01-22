@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mi Dieta - Calendario Dinámico</title>
+    <title>Mi Dieta - Vista Lista</title>
     <style>
         :root {
             --bg: #f2f2f7; --card: #ffffff; --text: #1c1c1e; --accent: #007aff;
@@ -28,13 +28,17 @@
         .titulo-seccion { text-align: center; font-size: 22px; font-weight: 900; margin: 15px 0; color: var(--text); }
         .vista { display: none; padding: 8px; }
 
-        /* DASHBOARD */
-        .dashboard { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-        .dash-semana { grid-column: span 2; font-weight: 800; font-size: 11px; margin: 15px 0 5px; color: #8e8e93; text-transform: uppercase; border-bottom: 0.5px solid #d1d1d6; }
-        .dash-dia { background: white; padding: 10px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; }
+        /* DASHBOARD - AHORA EN FILAS DE ANCHO COMPLETO */
+        .dashboard { display: flex; flex-direction: column; gap: 10px; }
+        .dash-semana { font-weight: 800; font-size: 11px; margin: 15px 0 5px; color: #8e8e93; text-transform: uppercase; border-bottom: 0.5px solid #d1d1d6; padding-bottom: 4px; }
+        .dash-dia { background: white; padding: 12px; border-radius: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative; border: 1px solid transparent; }
         .dash-dia.hoy { border: 2px solid var(--accent); background: #f0f7ff; }
-        .dash-dia-texto { font-weight: 800; font-size: 14px; color: var(--accent); margin-bottom: 4px; display: block; }
-        .dash-plato-resumen { font-size: 10px; color: #3a3a3c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .dash-dia-texto { font-weight: 800; font-size: 15px; color: var(--accent); margin-bottom: 4px; display: block; padding-right: 35px; }
+        .dash-plato-resumen { font-size: 12px; color: #3a3a3c; margin-top: 2px; }
+        
+        /* Checkbox en Dashboard */
+        .dash-check { position: absolute; top: 12px; right: 12px; width: 22px; height: 22px; accent-color: var(--accent); z-index: 10; cursor: pointer; }
+        .dash-click-area { cursor: pointer; }
 
         /* MENU */
         .semana-header { padding: 8px; color: white; border-radius: 8px; margin: 10px 0; text-align: center; font-weight: 800; background: #5856d6; }
@@ -56,8 +60,8 @@
         .compra-container { background: white; border-radius: 20px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .item-check { display: flex; align-items: center; padding: 12px 0; border-bottom: 0.5px solid #f2f2f7; cursor: pointer; }
         .item-check.comprado { opacity: 0.3; text-decoration: line-through; }
-        .checkbox { width: 20px; height: 20px; border: 2px solid var(--accent); border-radius: 6px; margin-right: 12px; flex-shrink: 0; }
-        .comprado .checkbox { background: var(--accent); }
+        .checkbox-estilo { width: 20px; height: 20px; border: 2px solid var(--accent); border-radius: 6px; margin-right: 12px; flex-shrink: 0; }
+        .comprado .checkbox-estilo { background: var(--accent); }
         .ref-plato { font-size: 9px; color: #8e8e93; margin-left: auto; text-align: right; }
 
         /* RECETAS */
@@ -89,6 +93,7 @@
 
     <div id="vista-compra" class="vista">
         <h1 class="titulo-seccion">Lista de Compra</h1>
+        <p style="font-size: 10px; text-align: center; color: #8e8e93; margin-top: -10px;">(Basado en los días marcados en Inicio)</p>
         <div id="lista-detallada" class="compra-container"></div>
     </div>
 
@@ -96,21 +101,14 @@
         const diasSemana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
         const cats = [{id: 'prot', n: 'Proteína', c: 'cat-prot', col: 'var(--proteina)'}, {id: 'veg', n: 'Verdura', c: 'cat-veg', col: 'var(--vegetal)'}, {id: 'carb', n: 'Hidratos', c: 'cat-carb', col: 'var(--carbo)'}, {id: 'lact', n: 'Lácteos', c: 'cat-lact', col: 'var(--lacteo)'}];
 
-        // CONFIGURACIÓN DINÁMICA
-        const FECHA_BASE = new Date(2026, 0, 19); // Lunes 19 Ene
+        const FECHA_BASE = new Date(2026, 0, 19); 
         
         function getInfoSemanaActual() {
             const hoy = new Date();
             const diffDias = Math.floor((hoy - FECHA_BASE) / (1000 * 60 * 60 * 24));
             const semanaRelativa = Math.floor(diffDias / 7);
-            
-            // Si diffDias es negativo (antes del 19), forzamos semana 0
             const startSemana = diffDias < 0 ? 0 : semanaRelativa;
-            
-            return {
-                inicioSemana1: startSemana, // Índice de la semana actual
-                inicioSemana2: startSemana + 1
-            };
+            return { inicioSemana1: startSemana, inicioSemana2: startSemana + 1 };
         }
 
         function obtenerFechaPorSemanaIndice(indiceSemanaGlobal, indiceDia) {
@@ -124,22 +122,26 @@
             let html = "";
             let hoyStr = new Date().toDateString();
 
-            [info.inicioSemana1, info.inicioSemana2].forEach((semGlobal, i) => {
-                const numSemanaDieta = (semGlobal % 2) === 0 ? 1 : 2; // Alterna 1 y 2
-                html += `<div class="dash-semana">Semana de Dieta ${numSemanaDieta} (Desde ${obtenerFechaPorSemanaIndice(semGlobal, 0).toLocaleDateString('es-ES', {day:'numeric', month:'short'})})</div>`;
+            [info.inicioSemana1, info.inicioSemana2].forEach((semGlobal) => {
+                const numSemanaDieta = (semGlobal % 2) === 0 ? 1 : 2;
+                html += `<div class="dash-semana">Semana de Dieta ${numSemanaDieta}</div>`;
                 
                 for (let d = 0; d < 7; d++) {
                     const fecha = obtenerFechaPorSemanaIndice(semGlobal, d);
-                    const txt = `${diasSemana[d]} ${fecha.getDate()}`;
+                    const checkId = `dia-completo-s${numSemanaDieta}-${d}`;
+                    const isChecked = localStorage.getItem(checkId) === 'true' ? 'checked' : '';
                     const tC = localStorage.getItem(`s${numSemanaDieta}-Comida-plato-${d}`) || "";
                     const tN = localStorage.getItem(`s${numSemanaDieta}-Cena-plato-${d}`) || "";
                     const esHoy = hoyStr === fecha.toDateString();
 
                     html += `
-                    <div class="dash-dia ${esHoy ? 'hoy' : ''}" onclick="irADia(${numSemanaDieta}, ${d})">
-                        <span class="dash-dia-texto">${txt}</span>
-                        <div class="dash-plato-resumen"><b>C:</b> ${tC || "---"}</div>
-                        <div class="dash-plato-resumen"><b>N:</b> ${tN || "---"}</div>
+                    <div class="dash-dia ${esHoy ? 'hoy' : ''}">
+                        <input type="checkbox" class="dash-check" id="${checkId}" ${isChecked} onchange="localStorage.setItem(this.id, this.checked)">
+                        <div class="dash-click-area" onclick="irADia(${numSemanaDieta}, ${d})">
+                            <span class="dash-dia-texto">${diasSemana[d]} ${fecha.getDate()}</span>
+                            <div class="dash-plato-resumen"><b>Comida:</b> ${tC || "---"}</div>
+                            <div class="dash-plato-resumen"><b>Cena:</b> ${tN || "---"}</div>
+                        </div>
                     </div>`;
                 }
             });
@@ -212,26 +214,30 @@
                 for (let i = 0; i < localStorage.length; i++) {
                     const key = localStorage.key(i);
                     if (key.includes(`-${c.id}-`)) {
-                        const val = localStorage.getItem(key).trim();
-                        if (val) {
-                            const p = key.split('-');
-                            const platoNom = localStorage.getItem(`${p[0]}-${p[1]}-plato-${p[3]}`) || "S/N";
-                            val.split(/[\n,]+/).map(ing => ing.trim()).filter(ing => ing).forEach(ing => {
-                                let f = ing.charAt(0).toUpperCase() + ing.slice(1).toLowerCase();
-                                if (!mapa[f]) mapa[f] = new Set();
-                                mapa[f].add(`${platoNom} (S${p[0].replace('s','')})`);
-                            });
+                        const p = key.split('-');
+                        const diaCheckId = `dia-completo-${p[0]}-${p[3]}`;
+                        
+                        if (localStorage.getItem(diaCheckId) === 'true') {
+                            const val = localStorage.getItem(key).trim();
+                            if (val) {
+                                const platoNom = localStorage.getItem(`${p[0]}-${p[1]}-plato-${p[3]}`) || "S/N";
+                                val.split(/[\n,]+/).map(ing => ing.trim()).filter(ing => ing).forEach(ing => {
+                                    let f = ing.charAt(0).toUpperCase() + ing.slice(1).toLowerCase();
+                                    if (!mapa[f]) mapa[f] = new Set();
+                                    mapa[f].add(`${platoNom} (S${p[0].replace('s','')})`);
+                                });
+                            }
                         }
                     }
                 }
                 if (Object.keys(mapa).length > 0) {
                     html += `<div style="color:${c.col}; font-size:12px; font-weight:900; margin:15px 0 5px; text-transform:uppercase;">${c.n}</div>`;
                     Object.keys(mapa).sort().forEach(k => {
-                        html += `<div class="item-check" onclick="this.classList.toggle('comprado')"><div class="checkbox"></div><span style="flex:1; font-size:14px;">${k}</span><div class="ref-plato">${Array.from(mapa[k]).join('<br>')}</div></div>`;
+                        html += `<div class="item-check" onclick="this.classList.toggle('comprado')"><div class="checkbox-estilo"></div><span style="flex:1; font-size:14px;">${k}</span><div class="ref-plato">${Array.from(mapa[k]).join('<br>')}</div></div>`;
                     });
                 }
             });
-            cont.innerHTML = html || "<p style='text-align:center; color:#999;'>Lista vacía.</p>";
+            cont.innerHTML = html || "<p style='text-align:center; color:#999; padding:20px;'>Marca los días que quieras comprar en 'Mi Planificación'.</p>";
         }
 
         function cambiarVista(id) {
@@ -256,7 +262,10 @@
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 const el = document.getElementById(key);
-                if (el) el.innerText = localStorage.getItem(key);
+                if (el) {
+                    if (el.type === 'checkbox') el.checked = (localStorage.getItem(key) === 'true');
+                    else el.innerText = localStorage.getItem(key);
+                }
             }
             actualizarRecetas();
         }
