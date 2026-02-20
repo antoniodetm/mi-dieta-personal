@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mi Dieta - Vista Lista</title>
+    <title>Mi Dieta Pro</title>
     <style>
         :root {
             --bg: #f2f2f7; --card: #ffffff; --text: #1c1c1e; --accent: #007aff;
@@ -21,6 +21,7 @@
         .btn-tool { flex: 1; padding: 12px 2px; border-radius: 8px; border: none; color: white; font-weight: 700; font-size: 8px; cursor: pointer; text-transform: uppercase; }
         .btn-home { background: #3a3a3c; }
         .btn-menu { background: #5856d6; }
+        .btn-recetas { background: #af52de; }
         .btn-compra { background: #ff9500; }
         .btn-sync { background: #007aff; }
         .btn-save { background: #28cd41; }
@@ -28,7 +29,6 @@
         .titulo-seccion { text-align: center; font-size: 22px; font-weight: 900; margin: 15px 0; color: var(--text); }
         .vista { display: none; padding: 8px; }
 
-        /* DASHBOARD - AHORA EN FILAS DE ANCHO COMPLETO */
         .dashboard { display: flex; flex-direction: column; gap: 10px; }
         .dash-semana { font-weight: 800; font-size: 11px; margin: 15px 0 5px; color: #8e8e93; text-transform: uppercase; border-bottom: 0.5px solid #d1d1d6; padding-bottom: 4px; }
         .dash-dia { background: white; padding: 12px; border-radius: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative; border: 1px solid transparent; }
@@ -36,18 +36,15 @@
         .dash-dia-texto { font-weight: 800; font-size: 15px; color: var(--accent); margin-bottom: 4px; display: block; padding-right: 35px; }
         .dash-plato-resumen { font-size: 12px; color: #3a3a3c; margin-top: 2px; }
         
-        /* Checkbox en Dashboard */
         .dash-check { position: absolute; top: 12px; right: 12px; width: 22px; height: 22px; accent-color: var(--accent); z-index: 10; cursor: pointer; }
         .dash-click-area { cursor: pointer; }
 
-        /* MENU */
         .semana-header { padding: 8px; color: white; border-radius: 8px; margin: 10px 0; text-align: center; font-weight: 800; background: #5856d6; }
         .dia-card { background: white; border-radius: 16px; padding: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); scroll-margin-top: 75px; }
         .dia-nombre-fecha { font-weight: 800; font-size: 18px; color: var(--accent); border-bottom: 1px solid #f2f2f7; padding-bottom: 4px; display: block; margin-bottom: 10px; }
         .bloque-ingesta { margin-bottom: 10px; padding: 8px; border-radius: 12px; background: #f9f9f9; border: 0.5px solid #e5e5ea; scroll-margin-top: 80px; }
         .plato-input { font-size: 14px; font-weight: 700; padding: 8px; background: white; border-radius: 8px; border: 1px solid #d1d1d6; outline: none; flex: 1; }
 
-        /* CATEGORÍAS */
         .cat-box { margin-bottom: 4px; border-radius: 6px; padding: 4px 8px; border-left: 4px solid #ccc; position: relative; }
         .cat-group-tag { font-size: 7px; font-weight: 900; text-transform: uppercase; color: rgba(0,0,0,0.3); position: absolute; top: 1px; left: 8px; }
         .ing-input { font-size: 13px; outline: none; min-height: 16px; padding-top: 6px; }
@@ -56,7 +53,6 @@
         .cat-carb { border-color: var(--carbo); background: #fff7e6; }
         .cat-lact { border-color: var(--lacteo); background: #f9f0ff; }
 
-        /* COMPRA */
         .compra-container { background: white; border-radius: 20px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .item-check { display: flex; align-items: center; padding: 12px 0; border-bottom: 0.5px solid #f2f2f7; cursor: pointer; }
         .item-check.comprado { opacity: 0.3; text-decoration: line-through; }
@@ -64,10 +60,15 @@
         .comprado .checkbox-estilo { background: var(--accent); }
         .ref-plato { font-size: 9px; color: #8e8e93; margin-left: auto; text-align: right; }
 
-        /* RECETAS */
         .receta-card { background: #fff; padding: 15px; border-radius: 16px; margin-bottom: 25px; border: 1px solid #eee; scroll-margin-top: 85px; }
         .receta-titulo { color: #d32f2f; font-weight: 800; border-left: 4px solid #d32f2f; padding-left: 8px; margin-bottom: 10px; display: block; }
         .receta-text { font-size: 14px; padding: 12px; background: #fafafa; border-radius: 10px; border: 1px dashed #ccc; outline: none; min-height: 50px; }
+
+        .repo-card { background: #fff; padding: 10px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #ddd; }
+        .repo-btn-add { background: var(--accent); color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; font-weight: bold; margin-bottom: 20px; }
+        
+        /* Botón Volver */
+        .btn-volver { background: #f0f0f5; color: var(--accent); border: 1px solid var(--accent); border-radius: 8px; padding: 10px; font-size: 11px; font-weight: bold; margin-top: 15px; width: 100%; cursor: pointer; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -75,72 +76,99 @@
     <div class="toolbar">
         <button class="btn-tool btn-home" onclick="cambiarVista('dashboard')">🏠 INICIO</button>
         <button class="btn-tool btn-menu" onclick="cambiarVista('menu')">📋 MENÚ</button>
+        <button class="btn-tool btn-recetas" onclick="irARecetas()">👨‍🍳 RECETAS</button>
         <button class="btn-tool btn-compra" onclick="cambiarVista('compra')">🛒 COMPRA</button>
         <button class="btn-tool btn-sync" onclick="sincronizar()">🔄 SYNC</button>
         <button class="btn-tool btn-save" onclick="exportarJSON()">💾 SAVE</button>
     </div>
 
     <div id="vista-dashboard" class="vista" style="display: block;">
-        <h1 id="titulo-dash" class="titulo-seccion">Mi Planificación</h1>
+        <h1 class="titulo-seccion">Mi Planificación</h1>
         <div id="dash-content" class="dashboard"></div>
     </div>
 
     <div id="vista-menu" class="vista">
         <div id="menu-content"></div>
-        <h1 class="titulo-seccion">👨‍🍳 Elaboración</h1>
+        <h1 id="seccion-recetas" class="titulo-seccion">👨‍🍳 Elaboración</h1>
         <div id="recetas-content"></div>
+    </div>
+
+    <div id="vista-recetas-repo" class="vista">
+        <h1 class="titulo-seccion">Repositorio de Recetas</h1>
+        <button class="repo-btn-add" onclick="nuevaRecetaRepo()">+ Crear Nueva Receta</button>
+        <div id="repo-content"></div>
     </div>
 
     <div id="vista-compra" class="vista">
         <h1 class="titulo-seccion">Lista de Compra</h1>
-        <p style="font-size: 10px; text-align: center; color: #8e8e93; margin-top: -10px;">(Basado en los días marcados en Inicio)</p>
         <div id="lista-detallada" class="compra-container"></div>
     </div>
 
     <script>
         const diasSemana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
         const cats = [{id: 'prot', n: 'Proteína', c: 'cat-prot', col: 'var(--proteina)'}, {id: 'veg', n: 'Verdura', c: 'cat-veg', col: 'var(--vegetal)'}, {id: 'carb', n: 'Hidratos', c: 'cat-carb', col: 'var(--carbo)'}, {id: 'lact', n: 'Lácteos', c: 'cat-lact', col: 'var(--lacteo)'}];
-
         const FECHA_BASE = new Date(2026, 0, 19); 
-        
+
         function getInfoSemanaActual() {
             const hoy = new Date();
             const diffDias = Math.floor((hoy - FECHA_BASE) / (1000 * 60 * 60 * 24));
             const semanaRelativa = Math.floor(diffDias / 7);
-            const startSemana = diffDias < 0 ? 0 : semanaRelativa;
-            return { inicioSemana1: startSemana, inicioSemana2: startSemana + 1 };
+            return { inicioSemana1: semanaRelativa, inicioSemana2: semanaRelativa + 1 };
         }
 
-        function obtenerFechaPorSemanaIndice(indiceSemanaGlobal, indiceDia) {
-            let f = new Date(FECHA_BASE);
-            f.setDate(f.getDate() + (indiceSemanaGlobal * 7) + indiceDia);
-            return f;
+        function migrarDietaARepo() {
+            if(localStorage.getItem('migracion_realizada')) return;
+            [1, 2].forEach(s => {
+                for(let d=0; d<7; d++) {
+                    ['Comida', 'Cena'].forEach(tipo => {
+                        const platoNom = localStorage.getItem(`s${s}-${tipo}-plato-${d}`);
+                        if(platoNom && platoNom.trim() !== "" && platoNom !== "...") {
+                            const id = 'repo-migrado-' + s + '-' + tipo + '-' + d;
+                            localStorage.setItem(id, JSON.stringify({
+                                nombre: platoNom,
+                                prot: localStorage.getItem(`s${s}-${tipo}-prot-${d}`) || "",
+                                veg: localStorage.getItem(`s${s}-${tipo}-veg-${d}`) || "",
+                                carb: localStorage.getItem(`s${s}-${tipo}-carb-${d}`) || "",
+                                lact: localStorage.getItem(`s${s}-${tipo}-lact-${d}`) || "",
+                                prep: localStorage.getItem(`receta-text-s${s}-${tipo}-plato-${d}`) || ""
+                            }));
+                        }
+                    });
+                }
+            });
+            localStorage.setItem('migracion_realizada', 'true');
         }
+
+        function cambiarVista(id) {
+            document.querySelectorAll('.vista').forEach(v => v.style.display = 'none');
+            document.getElementById('vista-' + id).style.display = 'block';
+            if(id === 'compra') actualizarLista();
+            if(id === 'dashboard') renderDashboard();
+            if(id === 'recetas-repo') renderRepo();
+            window.scrollTo(0,0);
+        }
+
+        function irARecetas() { cambiarVista('recetas-repo'); }
 
         function renderDashboard() {
             const info = getInfoSemanaActual();
+            const hoyStr = new Date().toDateString();
             let html = "";
-            let hoyStr = new Date().toDateString();
-
             [info.inicioSemana1, info.inicioSemana2].forEach((semGlobal) => {
                 const numSemanaDieta = (semGlobal % 2) === 0 ? 1 : 2;
-                html += `<div class="dash-semana">Semana de Dieta ${numSemanaDieta}</div>`;
-                
+                html += `<div class="dash-semana">Semana ${numSemanaDieta}</div>`;
                 for (let d = 0; d < 7; d++) {
-                    const fecha = obtenerFechaPorSemanaIndice(semGlobal, d);
+                    const fecha = new Date(FECHA_BASE);
+                    fecha.setDate(fecha.getDate() + (semGlobal * 7) + d);
                     const checkId = `dia-completo-s${numSemanaDieta}-${d}`;
-                    const isChecked = localStorage.getItem(checkId) === 'true' ? 'checked' : '';
-                    const tC = localStorage.getItem(`s${numSemanaDieta}-Comida-plato-${d}`) || "";
-                    const tN = localStorage.getItem(`s${numSemanaDieta}-Cena-plato-${d}`) || "";
                     const esHoy = hoyStr === fecha.toDateString();
-
                     html += `
                     <div class="dash-dia ${esHoy ? 'hoy' : ''}">
-                        <input type="checkbox" class="dash-check" id="${checkId}" ${isChecked} onchange="localStorage.setItem(this.id, this.checked)">
+                        <input type="checkbox" class="dash-check" id="${checkId}" ${localStorage.getItem(checkId) === 'true' ? 'checked' : ''} onchange="localStorage.setItem(this.id, this.checked)">
                         <div class="dash-click-area" onclick="irADia(${numSemanaDieta}, ${d})">
-                            <span class="dash-dia-texto">${diasSemana[d]} ${fecha.getDate()}</span>
-                            <div class="dash-plato-resumen"><b>Comida:</b> ${tC || "---"}</div>
-                            <div class="dash-plato-resumen"><b>Cena:</b> ${tN || "---"}</div>
+                            <span class="dash-dia-texto">${diasSemana[d]} ${fecha.getDate()}/${fecha.getMonth()+1}</span>
+                            <div class="dash-plato-resumen"><b>C:</b> ${localStorage.getItem(`s${numSemanaDieta}-Comida-plato-${d}`) || "---"}</div>
+                            <div class="dash-plato-resumen"><b>N:</b> ${localStorage.getItem(`s${numSemanaDieta}-Cena-plato-${d}`) || "---"}</div>
                         </div>
                     </div>`;
                 }
@@ -148,22 +176,15 @@
             document.getElementById('dash-content').innerHTML = html;
         }
 
-        function irADia(numSemanaDieta, d) {
-            cambiarVista('menu');
-            setTimeout(() => { document.getElementById(`dia-s${numSemanaDieta}-${d}`)?.scrollIntoView(); }, 150);
-        }
+        function irADia(s, d) { cambiarVista('menu'); setTimeout(() => { document.getElementById(`dia-s${s}-${d}`)?.scrollIntoView(); }, 150); }
 
         function renderMenu() {
             let html = "";
             [1, 2].forEach(s => {
-                html += `<div class="semana-header">Bloque Fijo: Semana ${s}</div>`;
+                html += `<div class="semana-header">Semana ${s}</div>`;
                 for (let d = 0; d < 7; d++) {
-                    html += `
-                    <div class="dia-card" id="dia-s${s}-${d}">
-                        <span class="dia-nombre-fecha">${diasSemana[d]} (Semana ${s})</span>
-                        ${renderBloque(s, d, 'Comida', '🍽️')}
-                        ${renderBloque(s, d, 'Cena', '🌙')}
-                    </div>`;
+                    html += `<div class="dia-card" id="dia-s${s}-${d}"><span class="dia-nombre-fecha">${diasSemana[d]}</span>
+                        ${renderBloque(s, d, 'Comida', '🍽️')} ${renderBloque(s, d, 'Cena', '🌙')}</div>`;
                 }
             });
             document.getElementById('menu-content').innerHTML = html;
@@ -174,36 +195,94 @@
             const id = `s${s}-${tipo}-plato-${d}`;
             return `
             <div class="bloque-ingesta" id="bloque-${id}">
-                <div style="display:flex; gap:6px; align-items:center; margin-bottom:8px;">
+                <div style="display:flex; gap:4px; align-items:center; margin-bottom:8px;">
                     <span style="font-size:10px;">${ico}</span>
                     <div class="plato-input" contenteditable="true" id="${id}" oninput="guardar(this)"></div>
-                    <button style="border:none; background:#eee; padding:6px; border-radius:6px; cursor:pointer;" onclick="document.getElementById('guia-${id}').scrollIntoView()">📖</button>
+                    <button style="border:none; background:#e1f5fe; padding:6px; border-radius:6px;" onclick="abrirSelector('${id}')">📥</button>
+                    <button style="border:none; background:#eee; padding:6px; border-radius:6px;" onclick="document.getElementById('guia-${id}').scrollIntoView({behavior:'smooth'})">📖</button>
                 </div>
-                ${cats.map(c => `
-                    <div class="cat-box ${c.c}">
-                        <span class="cat-group-tag">${c.n}</span>
-                        <div class="ing-input" contenteditable="true" id="s${s}-${tipo}-${c.id}-${d}" oninput="guardar(this)"></div>
-                    </div>`).join('')}
+                ${cats.map(c => `<div class="cat-box ${c.c}"><span class="cat-group-tag">${c.n}</span><div class="ing-input" contenteditable="true" id="s${s}-${tipo}-${c.id}-${d}" oninput="guardar(this)"></div></div>`).join('')}
             </div>`;
         }
 
-        function guardar(el) {
-            localStorage.setItem(el.id, el.innerText);
-            if(el.id.includes('plato')) actualizarRecetas();
+        function nuevaRecetaRepo() {
+            const nombre = prompt("Nombre del plato:");
+            if(!nombre) return;
+            localStorage.setItem('repo-' + Date.now(), JSON.stringify({ nombre, prot: '', veg: '', carb: '', lact: '', prep: '' }));
+            renderRepo();
         }
 
+        function renderRepo() {
+            let html = "";
+            Object.keys(localStorage).filter(k => k.startsWith('repo-')).forEach(key => {
+                const r = JSON.parse(localStorage.getItem(key));
+                html += `
+                <div class="repo-card">
+                    <div style="font-weight:900; color:var(--accent);" contenteditable="true" oninput="updateRepo('${key}', 'nombre', this.innerText)">${r.nombre}</div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; font-size:10px; margin: 8px 0;">
+                        ${cats.map(c => `<div class="cat-box ${c.c}">${c.n.substring(0,1)}: <span contenteditable="true" oninput="updateRepo('${key}', '${c.id}', this.innerText)">${r[c.id] || ''}</span></div>`).join('')}
+                    </div>
+                    <div contenteditable="true" style="font-size:12px; border:1px dashed #ccc; padding:5px; background:#f9f9f9;" oninput="updateRepo('${key}', 'prep', this.innerText)">${r.prep || "Pasos..."}</div>
+                    <button style="background:#ff3b30; color:white; border:none; border-radius:4px; font-size:9px; margin-top:8px; padding:4px 8px;" onclick="if(confirm('¿Eliminar?')){localStorage.removeItem('${key}'); renderRepo();}">Eliminar</button>
+                </div>`;
+            });
+            document.getElementById('repo-content').innerHTML = html || "<p style='text-align:center;'>Vacío</p>";
+        }
+
+        function updateRepo(key, field, val) {
+            let data = JSON.parse(localStorage.getItem(key));
+            data[field] = val;
+            localStorage.setItem(key, JSON.stringify(data));
+        }
+
+        function abrirSelector(targetId) {
+            const recetas = Object.keys(localStorage).filter(k => k.startsWith('repo-')).sort();
+            if(recetas.length === 0) return alert("Repositorio vacío.");
+            let idx = prompt("Elige receta:\n" + recetas.map((k, i) => `${i+1}. ${JSON.parse(localStorage.getItem(k)).nombre}`).join("\n"));
+            if(idx && recetas[idx-1]) importarAReceta(recetas[idx-1], targetId);
+        }
+
+        function importarAReceta(repoKey, targetId) {
+            const r = JSON.parse(localStorage.getItem(repoKey));
+            const base = targetId.split('-plato-')[0];
+            const dia = targetId.split('-plato-')[1];
+            document.getElementById(targetId).innerText = r.nombre;
+            localStorage.setItem(targetId, r.nombre);
+            ['prot','veg','carb','lact'].forEach(c => {
+                const elId = `${base}-${c}-${dia}`;
+                if(document.getElementById(elId)) { document.getElementById(elId).innerText = r[c]; localStorage.setItem(elId, r[c]); }
+            });
+            localStorage.setItem(`receta-text-${targetId}`, r.prep);
+            actualizarRecetas();
+        }
+
+        function guardar(el) { localStorage.setItem(el.id, el.innerText); if(el.id.includes('plato')) actualizarRecetas(); }
+        
         function actualizarRecetas() {
             let html = "";
             document.querySelectorAll('.plato-input').forEach(input => {
-                const nom = input.innerText.trim() || "Plato";
                 const idRec = `receta-text-${input.id}`;
                 html += `<div class="receta-card" id="guia-${input.id}">
-                    <span class="receta-titulo">${nom}</span>
+                    <span class="receta-titulo">${input.innerText || "Plato"}</span>
                     <div class="receta-text" contenteditable="true" id="${idRec}" oninput="localStorage.setItem(this.id, this.innerText)">${localStorage.getItem(idRec) || "..."}</div>
-                    <button style="background:#f0f0f5; color:var(--accent); border:1px solid var(--accent); border-radius:8px; padding:8px; font-size:10px; font-weight:bold; margin-top:10px; width:100%; cursor:pointer;" onclick="document.getElementById('bloque-${input.id}').scrollIntoView()">Volver al Plato ↑</button>
+                    <button class="btn-volver" onclick="document.getElementById('bloque-${input.id}').scrollIntoView({behavior:'smooth'})">↑ Volver al Menú</button>
                 </div>`;
             });
             document.getElementById('recetas-content').innerHTML = html;
+        }
+
+        function cargarDatos() {
+            for (let i = 0; i < localStorage.length; i++) {
+                const k = localStorage.key(i);
+                const el = document.getElementById(k);
+                if (el && !k.startsWith('repo-')) el.innerText = localStorage.getItem(k);
+            }
+            actualizarRecetas();
+        }
+
+        function exportarJSON() {
+            let d = {}; for(let i=0; i<localStorage.length; i++){ let k = localStorage.key(i); d[k] = localStorage.getItem(k); }
+            let a = document.createElement('a'); a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(d)); a.download = "dieta.json"; a.click();
         }
 
         function actualizarLista() {
@@ -215,37 +294,25 @@
                     const key = localStorage.key(i);
                     if (key.includes(`-${c.id}-`)) {
                         const p = key.split('-');
-                        const diaCheckId = `dia-completo-${p[0]}-${p[3]}`;
-                        
-                        if (localStorage.getItem(diaCheckId) === 'true') {
+                        if (localStorage.getItem(`dia-completo-${p[0]}-${p[3]}`) === 'true') {
                             const val = localStorage.getItem(key).trim();
                             if (val) {
-                                const platoNom = localStorage.getItem(`${p[0]}-${p[1]}-plato-${p[3]}`) || "S/N";
-                                val.split(/[\n,]+/).map(ing => ing.trim()).filter(ing => ing).forEach(ing => {
-                                    let f = ing.charAt(0).toUpperCase() + ing.slice(1).toLowerCase();
-                                    if (!mapa[f]) mapa[f] = new Set();
-                                    mapa[f].add(`${platoNom} (S${p[0].replace('s','')})`);
+                                val.split(/[\n,]+/).forEach(ing => {
+                                    let f = ing.trim().charAt(0).toUpperCase() + ing.trim().slice(1).toLowerCase();
+                                    if(f) { if (!mapa[f]) mapa[f] = new Set(); mapa[f].add(localStorage.getItem(`${p[0]}-${p[1]}-plato-${p[3]}`) || "S/N"); }
                                 });
                             }
                         }
                     }
                 }
                 if (Object.keys(mapa).length > 0) {
-                    html += `<div style="color:${c.col}; font-size:12px; font-weight:900; margin:15px 0 5px; text-transform:uppercase;">${c.n}</div>`;
+                    html += `<div style="color:${c.col}; font-size:12px; font-weight:900; margin:15px 0 5px;">${c.n}</div>`;
                     Object.keys(mapa).sort().forEach(k => {
-                        html += `<div class="item-check" onclick="this.classList.toggle('comprado')"><div class="checkbox-estilo"></div><span style="flex:1; font-size:14px;">${k}</span><div class="ref-plato">${Array.from(mapa[k]).join('<br>')}</div></div>`;
+                        html += `<div class="item-check" onclick="this.classList.toggle('comprado')"><div class="checkbox-estilo"></div><span style="flex:1;">${k}</span><div class="ref-plato">${Array.from(mapa[k]).join(', ')}</div></div>`;
                     });
                 }
             });
-            cont.innerHTML = html || "<p style='text-align:center; color:#999; padding:20px;'>Marca los días que quieras comprar en 'Mi Planificación'.</p>";
-        }
-
-        function cambiarVista(id) {
-            document.querySelectorAll('.vista').forEach(v => v.style.display = 'none');
-            document.getElementById('vista-' + id).style.display = 'block';
-            window.scrollTo(0,0);
-            if(id === 'compra') actualizarLista();
-            if(id === 'dashboard') renderDashboard();
+            cont.innerHTML = html || "<p style='text-align:center;'>Marca días en Inicio.</p>";
         }
 
         async function sincronizar() {
@@ -258,24 +325,9 @@
             } catch(e) { alert("Error"); }
         }
 
-        function cargarDatos() {
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                const el = document.getElementById(key);
-                if (el) {
-                    if (el.type === 'checkbox') el.checked = (localStorage.getItem(key) === 'true');
-                    else el.innerText = localStorage.getItem(key);
-                }
-            }
-            actualizarRecetas();
-        }
-
-        function exportarJSON() {
-            let d = {}; for(let i=0; i<localStorage.length; i++){ let k = localStorage.key(i); d[k] = localStorage.getItem(k); }
-            let a = document.createElement('a'); a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(d)); a.download = "dieta.json"; a.click();
-        }
-
-        renderMenu(); renderDashboard();
+        migrarDietaARepo();
+        renderMenu();
+        renderDashboard();
     </script>
 </body>
 </html>
